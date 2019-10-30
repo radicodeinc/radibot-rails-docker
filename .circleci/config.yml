@@ -1,0 +1,38 @@
+version: 2
+
+jobs:
+  build:
+    parallelism: 1
+    machine:
+      docker_layer_caching: true
+      version: 18.06.0-ce
+    environment:
+      OWNER: radicode
+      IMAGE_NAME: radibot-rails
+    steps:
+    - checkout
+    - run:
+        name: Build
+        command: docker build -t ${OWNER}/${IMAGE_NAME}:latest .
+    - run:
+        name: Tag to latest
+        command: docker tag ${OWNER}/${IMAGE_NAME}:latest ${OWNER}/${IMAGE_NAME}:sha1-${CIRCLE_SHA1}
+    - run:
+        command: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+        name: docker login
+    - run:
+        name: Push image to registory
+        command: |
+          docker push ${OWNER}/${IMAGE_NAME}
+          docker push ${OWNER}/${IMAGE_NAME}:sha1-${CIRCLE_SHA1}
+
+workflows:
+  version: 2
+
+  build:
+    jobs:
+      - build:
+          context: org-global
+
+
