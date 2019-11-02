@@ -5,6 +5,7 @@ RUN apt-get update -qq && apt-get install -y \
     build-essential \
     nodejs \
     postgresql-client \
+    yarn \
  && rm -rf /var/lib/apt/lists/*
 
 RUN gem install bundler
