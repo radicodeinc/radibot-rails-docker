@@ -1,3 +1,4 @@
+# syntax = docker/dockerfile:experimental
 FROM ruby:2.6.3
 ENV LANG C.UTF-8
 
