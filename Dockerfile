@@ -1,11 +1,21 @@
 # syntax = docker/dockerfile:experimental
-FROM ruby:2.6.3
+FROM ruby:2.6.3 AS nodejs
 ENV LANG C.UTF-8
 
-RUN apt-get update && apt-get install -y curl apt-transport-https wget build-essential nodejs postgresql-client && \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update -qq && apt-get install -y yarn && \
+WORKDIR /tmp
+
+RUN curl -LO https://nodejs.org/dist/v12.5.0/node-v12.5.0-linux-x64.tar.xz
+RUN tar xvf node-v12.5.0-linux-x64.tar.xz
+RUN mv node-v12.5.0-linux-x64 node
+
+FROM ruby:2.6.3
+
+COPY --from=nodejs /tmp/node /opt/node
+ENV PATH /opt/node/bin:$PATH
+RUN curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.16.0
+ENV PATH /root/.yarn/bin:/root/.config/yarn/global/node_modules/.bin:$PATH
+
+RUN apt-get update && apt-get install -y curl apt-transport-https wget build-essential postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 RUN gem install bundler
