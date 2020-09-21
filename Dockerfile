@@ -1,14 +1,14 @@
 # syntax = docker/dockerfile:experimental
-FROM ruby:2.6.3 AS nodejs
+FROM ruby:2.6.5 AS nodejs
 ENV LANG C.UTF-8
 
 WORKDIR /tmp
 
-RUN curl -LO https://nodejs.org/dist/v12.5.0/node-v12.5.0-linux-x64.tar.xz
-RUN tar xvf node-v12.5.0-linux-x64.tar.xz
-RUN mv node-v12.5.0-linux-x64 node
+RUN curl -LO https://nodejs.org/dist/v13.11.0/node-v13.11.0-linux-x64.tar.xz
+RUN tar xvf node-v13.11.0-linux-x64.tar.xz
+RUN mv node-v13.11.0-linux-x64 node
 
-FROM ruby:2.6.3
+FROM ruby:2.6.5
 
 COPY --from=nodejs /tmp/node /opt/node
 ENV PATH /opt/node/bin:$PATH
